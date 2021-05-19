@@ -11,7 +11,17 @@ canvas.height = height;
 
 let score = 0;
 let gameFrame = 0;
-ctx.font = "50px Georgia";
+ctx.font = "50px Arial";
+
+let resizeCanvas = () => {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width - 100;
+  canvas.height = height - 104;
+  ctx.font = "40px myFont";
+};
+
+resizeCanvas();
 
 // mouse interactivity
 
@@ -38,19 +48,20 @@ canvas.addEventListener("mouseup", () => {
 });
 
 const playerImg = new Image();
-playerImg.src = "bigfolder.png";
+playerImg.src = "player.png";
 // player character
+
 class Player {
   constructor() {
     this.x = canvas.width / 2; //start coordinates
     this.y = canvas.height / 2;
-    this.radius = 50;
+    this.radius = 86;
     this.angle = 0;
     this.frameX = 0;
     this.frameY = 0;
     this.frame = 0;
-    this.spriteWidth = 92;
-    this.spriteHeight = 92;
+    this.spriteWidth = 182;
+    this.spriteHeight = 179;
   }
 
   update() {
@@ -75,7 +86,7 @@ class Player {
       ctx.lineTo(mouse.x, mouse.y);
       ctx.stroke();
     }
-    ctx.fillStyle = "red";
+    ctx.fillStyle = "transparent";
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
@@ -88,19 +99,83 @@ class Player {
       this.frameY * this.spriteHeight,
       this.spriteWidth,
       this.spriteHeight,
-      this.x - 40, // adjust here to align item with collision area
-      this.y - 50, // and here (i.e. - 60)
+      this.x - 100, // adjust here to align item with collision area
+      this.y - 100, // and here (i.e. - 60)
       this.spriteWidth, // scale here if needed (i.e. this.spriteWidth/4)
       this.spriteHeight
     );
   }
 }
 
-const player = new Player();
-
 // bubbles
 
-const bubblesArray = [];
+const objectArray = [];
+
+const bubblePop1 = document.createElement("audio");
+bubblePop1.src = "";
+bubblePop1.crossOrigin = "anonymous";
+
+const bubblePop2 = document.createElement("audio");
+bubblePop1.src = "";
+bubblePop2.crossOrigin = "anonymous";
+
+function handleBubbles() {
+  if (gameFrame % 50 == 0) {
+    //every 50 frames..
+    objectArray.push(new Folder());
+    console.log(objectArray);
+  }
+
+  for (let i = 0; i < objectArray.length; i++) {
+    // call update and draw methods for each bubbles in the array
+    objectArray[i].update();
+    objectArray[i].draw();
+  }
+
+  // when y position > 0 then delete bubbles. 0 - this.radius * 2 ensures full bubbles has passed
+
+  for (let i = 0; i < objectArray.length; i++) {
+    if (objectArray[i].y < 0 - objectArray[i].radius * 2) {
+      objectArray.splice(i, 1);
+    }
+
+    if (objectArray[i]) {
+      if (objectArray[i].distance < objectArray[i].radius + player.radius) {
+        console.log("collision!");
+        // this line allows us to set the score only once per bubble, even though multiple collisions will continue to be registered
+        if (!objectArray[i].counted) {
+          if (objectArray[i].sound == "sound1") {
+            console.log("fuck");
+            bubblePop1.play();
+          } else {
+            console.log(objectArray[i].sound);
+            bubblePop2.play();
+          }
+          score++;
+          objectArray[i].counted = true;
+          objectArray.splice(i, 1); //by calling splice, we remove i element from the array upon collision (1 just means only this one)
+        }
+      }
+    }
+    // collision detection, using distance of each bubble agaisnt player radius
+  }
+}
+
+// animation loop
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas as part of render loop
+  player.update();
+  player.draw();
+  handleBubbles();
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+  ctx.fillText("IDEAS - " + score, 20, 50);
+  ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+  ctx.fillText("TIME ELAPSED - " + gameFrame, 20, 120);
+  gameFrame++; // increase game frame as game continues
+  requestAnimationFrame(animate);
+}
 
 class Bubble {
   constructor() {
@@ -132,81 +207,62 @@ class Bubble {
   }
 }
 
-const bubblePop1 = document.createElement("audio");
-bubblePop1.src = "";
-bubblePop1.crossOrigin = "anonymous";
+const folderImg = new Image();
+folderImg.src = "bigfolder.png";
 
-const bubblePop2 = document.createElement("audio");
-bubblePop1.src = "";
-bubblePop2.crossOrigin = "anonymous";
-
-function handleBubbles() {
-  if (gameFrame % 50 == 0) {
-    //every 50 frames..
-    bubblesArray.push(new Bubble());
+class Folder {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 100;
+    this.radius = 50;
+    this.speed = Math.random() * 5 + 1;
+    this.distance;
+    this.counted = false;
+    this.sound = "sound1"; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
+    this.frameX = 0;
+    this.frameY = 0;
+    this.frame = 0;
+    this.spriteWidth = 182;
+    this.spriteHeight = 179;
   }
 
-  for (let i = 0; i < bubblesArray.length; i++) {
-    // call update and draw methods for each bubbles in the array
-    bubblesArray[i].update();
-    bubblesArray[i].draw();
+  update() {
+    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
+    const dx = this.x - player.x;
+    const dy = this.y - player.y;
+    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
+    this.distance = Math.sqrt(dx * dx + dy * dy);
   }
 
-  // when y position > 0 then delete bubbles. 0 - this.radius * 2 ensures full bubbles has passed
+  draw() {
+    ctx.fillStyle = "transparent";
+    ctx.beginPath();
+    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.stroke();
 
-  for (let i = 0; i < bubblesArray.length; i++) {
-    if (bubblesArray[i].y < 0 - bubblesArray[i].radius * 2) {
-      bubblesArray.splice(i, 1);
-    }
-
-    if (bubblesArray[i]) {
-      if (bubblesArray[i].distance < bubblesArray[i].radius + player.radius) {
-        console.log("collision!");
-        // this line allows us to set the score only once per bubble, even though multiple collisions will continue to be registered
-        if (!bubblesArray[i].counted) {
-          if (bubblesArray[i].sound == "sound1") {
-            console.log("fuck");
-            bubblePop1.play();
-          } else {
-            console.log(bubblesArray[i].sound);
-            bubblePop2.play();
-          }
-          score++;
-          bubblesArray[i].counted = true;
-          bubblesArray.splice(i, 1); //by calling splice, we remove i element from the array upon collision (1 just means only this one)
-        }
-      }
-    }
-    // collision detection, using distance of each bubble agaisnt player radius
+    ctx.drawImage(
+      folderImg,
+      this.frameX * this.spriteWidth, //
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x - 40, // adjust here to align item with collision area
+      this.y - 50, // and here (i.e. - 60)
+      this.spriteWidth, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight
+    );
   }
 }
-
-// animation loop
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas as part of render loop
-  player.update();
-  player.draw();
-  handleBubbles();
-
-  ctx.fillStyle = "black";
-  ctx.fillText("score: " + score, 10, 50);
-  gameFrame++; // increase game frame as game continues
-  requestAnimationFrame(animate);
-}
-
-let resizeCanvas = () => {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = width - 100;
-  canvas.height = height - 104;
-  ctx.font = "50px Georgia";
-};
-
-resizeCanvas();
 
 window.addEventListener("resize", () => {
   resizeCanvas();
 });
+
+resizeCanvas();
+
+const player = new Player();
 
 animate();
