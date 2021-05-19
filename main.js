@@ -119,11 +119,20 @@ const bubblePop2 = document.createElement("audio");
 bubblePop1.src = "";
 bubblePop2.crossOrigin = "anonymous";
 
-function handleBubbles() {
+function handleObjects() {
+  if (gameFrame % 50 == 0) {
+    //every 50 frames..
+    objectArray.push(new Milk());
+  }
+
+  if (gameFrame % 50 == 0) {
+    //every 50 frames..
+    objectArray.push(new Bear());
+  }
+
   if (gameFrame % 50 == 0) {
     //every 50 frames..
     objectArray.push(new Folder());
-    console.log(objectArray);
   }
 
   for (let i = 0; i < objectArray.length; i++) {
@@ -167,7 +176,7 @@ function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas as part of render loop
   player.update();
   player.draw();
-  handleBubbles();
+  handleObjects();
 
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
   ctx.fillText("IDEAS - " + score, 20, 50);
@@ -253,6 +262,106 @@ class Folder {
       this.y - 50, // and here (i.e. - 60)
       this.spriteWidth, // scale here if needed (i.e. this.spriteWidth/4)
       this.spriteHeight
+    );
+  }
+}
+
+const bearImg = new Image();
+bearImg.src = "bear.png";
+
+class Bear {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 100;
+    this.radius = 50;
+    this.speed = Math.random() * 5 + 1;
+    this.distance;
+    this.counted = false;
+    this.sound = "sound1"; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
+    this.frameX = 0;
+    this.frameY = 0;
+    this.frame = 0;
+    this.spriteWidth = 50;
+    this.spriteHeight = 50;
+  }
+
+  update() {
+    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
+    const dx = this.x - player.x;
+    const dy = this.y - player.y;
+    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
+    this.distance = Math.sqrt(dx * dx + dy * dy);
+  }
+
+  draw() {
+    ctx.fillStyle = "transparent";
+    ctx.beginPath();
+    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.drawImage(
+      bearImg,
+      this.frameX * this.spriteWidth, //
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x - 40, // adjust here to align item with collision area
+      this.y - 50, // and here (i.e. - 60)
+      this.spriteWidth * 1.5, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight * 1.5
+    );
+  }
+}
+
+const milkImg = new Image();
+milkImg.src = "milk.png";
+
+class Milk {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 100;
+    this.radius = 50;
+    this.speed = Math.random() * 5 + 1;
+    this.distance;
+    this.counted = false;
+    this.sound = "sound1"; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
+    this.frameX = 0;
+    this.frameY = 0;
+    this.frame = 0;
+    this.spriteWidth = 19;
+    this.spriteHeight = 35;
+  }
+
+  update() {
+    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
+    const dx = this.x - player.x;
+    const dy = this.y - player.y;
+    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
+    this.distance = Math.sqrt(dx * dx + dy * dy);
+  }
+
+  draw() {
+    ctx.fillStyle = "transparent";
+    ctx.beginPath();
+    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.drawImage(
+      milkImg,
+      this.frameX * this.spriteWidth, //
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x - 40, // adjust here to align item with collision area
+      this.y - 50, // and here (i.e. - 60)
+      this.spriteWidth * 2, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight * 2
     );
   }
 }
