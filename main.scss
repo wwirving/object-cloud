@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0px;
+  background-color: #f0222a;
+}
+
+#c {
+  border: 4px solid white;
+  border-radius: 30px;
+}
+
+.viewer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2%;
+}
