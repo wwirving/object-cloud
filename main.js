@@ -1,13 +1,54 @@
 // canvas setup
-var sound = new Howl({
-  src: ["./sounds/ping_pong.mp3"],
+
+//sound loadins
+
+const bearSound = new Howl({
+  src: ["./sounds/1.mp3"],
+});
+const bijoSound = new Howl({
+  src: ["./sounds/2.mp3"],
+});
+const folderSound = new Howl({
+  src: ["./sounds/3.mp3"],
+});
+const heroSound = new Howl({
+  src: ["./sounds/4.mp3"],
+});
+const humbergSound = new Howl({
+  src: ["./sounds/5.mp3"],
+});
+const kamakiriSound = new Howl({
+  src: ["./sounds/6.mp3"],
+});
+const masterSound = new Howl({
+  src: ["./sounds/7.mp3"],
+});
+const milkSound = new Howl({
+  src: ["./sounds/8.mp3"],
+});
+const pencilSound = new Howl({
+  src: ["./sounds/9.mp3"],
+});
+const ramensoupSound = new Howl({
+  src: ["./sounds/10.mp3"],
+});
+const showsSound = new Howl({
+  src: ["./sounds/11.mp3"],
+});
+const tomatoSound = new Howl({
+  src: ["./sounds/12.mp3"],
+});
+const tyunSound = new Howl({
+  src: ["./sounds/13.mp3"],
+});
+const usagiSound = new Howl({
+  src: ["./sounds/14.mp3"],
+});
+const yakyuSound = new Howl({
+  src: ["./sounds/15.mp3"],
 });
 
-var bach = new Howl({
-  src: ["./sounds/minuet.mp3"],
-});
-
-bach.play();
+// canvas/setup
 
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
@@ -56,9 +97,10 @@ canvas.addEventListener("mouseup", () => {
   mouse.click = false;
 });
 
+// Player character
+
 const playerImg = new Image();
 playerImg.src = "./images/player.png";
-// player character
 
 class Player {
   constructor() {
@@ -116,17 +158,9 @@ class Player {
   }
 }
 
-// bubbles
+// object handling
 
 const objectArray = [];
-
-const bubblePop1 = document.createElement("audio");
-bubblePop1.src = "";
-bubblePop1.crossOrigin = "anonymous";
-
-const bubblePop2 = document.createElement("audio");
-bubblePop1.src = "";
-bubblePop2.crossOrigin = "anonymous";
 
 function handleObjects() {
   if (gameFrame % 50 == 0) {
@@ -142,6 +176,21 @@ function handleObjects() {
   if (gameFrame % 50 == 0) {
     //every 50 frames..
     objectArray.push(new Folder());
+  }
+
+  if (gameFrame % 50 == 0) {
+    //every 50 frames..
+    objectArray.push(new Hero());
+  }
+
+  if (gameFrame % 50 == 0) {
+    //every 50 frames..
+    objectArray.push(new Bijo());
+  }
+
+  if (gameFrame % 50 == 0) {
+    //every 50 frames..
+    objectArray.push(new Humberg());
   }
 
   for (let i = 0; i < objectArray.length; i++) {
@@ -163,11 +212,17 @@ function handleObjects() {
         // this line allows us to set the score only once per bubble, even though multiple collisions will continue to be registered
         if (!objectArray[i].counted) {
           if (objectArray[i].sound == "milk") {
-            sound.play();
+            milkSound.play();
           } else if (objectArray[i].sound == "folder") {
-            sound.play();
+            folderSound.play();
           } else if (objectArray[i].sound == "bear") {
-            sound.play();
+            bearSound.play();
+          } else if (objectArray[i].sound == "bijo") {
+            bijoSound.play();
+          } else if (objectArray[i].sound == "hero") {
+            heroSound.play();
+          } else if (objectArray[i].sound == "humberg") {
+            humbergSound.play();
           }
           score++;
           objectArray[i].counted = true;
@@ -195,6 +250,7 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
+// classes (objects in game)
 class Bubble {
   constructor() {
     this.x = Math.random() * canvas.width;
@@ -226,7 +282,7 @@ class Bubble {
 }
 
 const folderImg = new Image();
-folderImg.src = "./images/bigfolder.png";
+folderImg.src = "./images/folder.png";
 
 class Folder {
   constructor() {
@@ -374,6 +430,158 @@ class Milk {
     );
   }
 }
+
+const bijoImg = new Image();
+bijoImg.src = "./images/bijo.png";
+
+class Bijo {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 100;
+    this.radius = 40;
+    this.speed = Math.random() * 5 + 1;
+    this.distance;
+    this.counted = false;
+    this.sound = "bijo"; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
+    this.frameX = 0;
+    this.frameY = 0;
+    this.frame = 0;
+    this.spriteWidth = 30;
+    this.spriteHeight = 60;
+  }
+
+  update() {
+    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
+    const dx = this.x - player.x;
+    const dy = this.y - player.y;
+    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
+    this.distance = Math.sqrt(dx * dx + dy * dy);
+  }
+
+  draw() {
+    ctx.fillStyle = "transparent";
+    ctx.beginPath();
+    //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.drawImage(
+      bijoImg,
+      this.frameX * this.spriteWidth, //
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x - 30, // adjust here to align item with collision area
+      this.y - 40, // and here (i.e. - 60)
+      this.spriteWidth * 1.5, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight * 1.5
+    );
+  }
+}
+
+const heroImg = new Image();
+heroImg.src = "./images/hero.png";
+
+class Hero {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 100;
+    this.radius = 40;
+    this.speed = Math.random() * 5 + 1;
+    this.distance;
+    this.counted = false;
+    this.sound = "hero"; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
+    this.frameX = 0;
+    this.frameY = 0;
+    this.frame = 0;
+    this.spriteWidth = 32;
+    this.spriteHeight = 70;
+  }
+
+  update() {
+    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
+    const dx = this.x - player.x;
+    const dy = this.y - player.y;
+    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
+    this.distance = Math.sqrt(dx * dx + dy * dy);
+  }
+
+  draw() {
+    ctx.fillStyle = "transparent";
+    ctx.beginPath();
+    //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.drawImage(
+      heroImg,
+      this.frameX * this.spriteWidth, //
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x - 20, // adjust here to align item with collision area
+      this.y - 35, // and here (i.e. - 60)
+      this.spriteWidth * 1, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight * 1
+    );
+  }
+}
+
+const humbergImg = new Image();
+humbergImg.src = "./images/humberg.png";
+
+class Humberg {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 100;
+    this.radius = 40;
+    this.speed = Math.random() * 5 + 1;
+    this.distance;
+    this.counted = false;
+    this.sound = "humberg"; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
+    this.frameX = 0;
+    this.frameY = 0;
+    this.frame = 0;
+    this.spriteWidth = 60;
+    this.spriteHeight = 32;
+  }
+
+  update() {
+    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
+    const dx = this.x - player.x;
+    const dy = this.y - player.y;
+    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
+    this.distance = Math.sqrt(dx * dx + dy * dy);
+  }
+
+  draw() {
+    ctx.fillStyle = "transparent";
+    ctx.beginPath();
+    //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.drawImage(
+      humbergImg,
+      this.frameX * this.spriteWidth, //
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x - 35, // adjust here to align item with collision area
+      this.y - 20, // and here (i.e. - 60)
+      this.spriteWidth * 1.2, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight * 1.2
+    );
+  }
+}
+
+// resizing, call to action
 
 window.addEventListener("resize", () => {
   resizeCanvas();

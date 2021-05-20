@@ -10,6 +10,8 @@ Browser game built using HTML, CSS and JS
 
 <!-- 1. Add 3 different objects -->
 
+++ function to generate random integer between 1-15 in order to select class
+
 2. Configure different sound for different objects
 
 3. Add ideas class (with sound)
@@ -18,7 +20,7 @@ Browser game built using HTML, CSS and JS
 
 ++) Add background soundscape
 
-++) add object rotation (at random)
+++) add object rotation (at random) and size (by scale factor on both radius and object scaling)
 
 5. Add more objects
 
@@ -27,3 +29,5 @@ Browser game built using HTML, CSS and JS
 ++) refine sound track/sound components
 
 7. Mechanics so that screen can eventually fill all the way up with objects
+
+8. Add sound fx over time - reverb, delay etc.
