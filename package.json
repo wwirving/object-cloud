@@ -1,8 +1,13 @@
 {
 	"devDependencies": {
+		"@babel/core": "^7.14.3",
+		"@babel/preset-env": "^7.14.2",
 		"sass": "^1.32.8"
 	},
 	"scripts": {
 		"watch:scss": "sass --watch main.scss main.css"
+	},
+	"dependencies": {
+		"howler": "^2.2.1"
 	}
 }

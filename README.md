@@ -24,4 +24,6 @@ Browser game built using HTML, CSS and JS
 
 6. Change direction of avatar on click
 
+++) refine sound track/sound components
+
 7. Mechanics so that screen can eventually fill all the way up with objects

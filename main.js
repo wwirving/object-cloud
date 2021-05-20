@@ -1,4 +1,13 @@
 // canvas setup
+var sound = new Howl({
+  src: ["./sounds/ping_pong.mp3"],
+});
+
+var bach = new Howl({
+  src: ["./sounds/minuet.mp3"],
+});
+
+bach.play();
 
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
@@ -48,7 +57,7 @@ canvas.addEventListener("mouseup", () => {
 });
 
 const playerImg = new Image();
-playerImg.src = "player.png";
+playerImg.src = "./images/player.png";
 // player character
 
 class Player {
@@ -153,12 +162,12 @@ function handleObjects() {
         console.log("collision!");
         // this line allows us to set the score only once per bubble, even though multiple collisions will continue to be registered
         if (!objectArray[i].counted) {
-          if (objectArray[i].sound == "sound1") {
-            console.log("fuck");
-            bubblePop1.play();
-          } else {
-            console.log(objectArray[i].sound);
-            bubblePop2.play();
+          if (objectArray[i].sound == "milk") {
+            sound.play();
+          } else if (objectArray[i].sound == "folder") {
+            sound.play();
+          } else if (objectArray[i].sound == "bear") {
+            sound.play();
           }
           score++;
           objectArray[i].counted = true;
@@ -217,7 +226,7 @@ class Bubble {
 }
 
 const folderImg = new Image();
-folderImg.src = "bigfolder.png";
+folderImg.src = "./images/bigfolder.png";
 
 class Folder {
   constructor() {
@@ -227,7 +236,7 @@ class Folder {
     this.speed = Math.random() * 5 + 1;
     this.distance;
     this.counted = false;
-    this.sound = "sound1"; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    this.sound = "folder"; //Math.random() <= 0.5 ? "sound1" : "sound2";
     // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
     this.frameX = 0;
     this.frameY = 0;
@@ -267,7 +276,7 @@ class Folder {
 }
 
 const bearImg = new Image();
-bearImg.src = "bear.png";
+bearImg.src = "./images/bear.png";
 
 class Bear {
   constructor() {
@@ -277,7 +286,7 @@ class Bear {
     this.speed = Math.random() * 5 + 1;
     this.distance;
     this.counted = false;
-    this.sound = "sound1"; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    this.sound = "bear"; //Math.random() <= 0.5 ? "sound1" : "sound2";
     // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
     this.frameX = 0;
     this.frameY = 0;
@@ -317,7 +326,7 @@ class Bear {
 }
 
 const milkImg = new Image();
-milkImg.src = "milk.png";
+milkImg.src = "./images/milk.png";
 
 class Milk {
   constructor() {
@@ -327,7 +336,7 @@ class Milk {
     this.speed = Math.random() * 5 + 1;
     this.distance;
     this.counted = false;
-    this.sound = "sound1"; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    this.sound = "milk"; //Math.random() <= 0.5 ? "sound1" : "sound2";
     // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
     this.frameX = 0;
     this.frameY = 0;
