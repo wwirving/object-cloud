@@ -4,51 +4,22 @@
 
 //ignore 4
 
-const bearSound = new Howl({
-  src: ["./sounds/1.mp3"],
-});
-const bijoSound = new Howl({
-  src: ["./sounds/2.mp3"],
-});
-const folderSound = new Howl({
-  src: ["./sounds/3.mp3"],
-});
-const heroSound = new Howl({
-  src: ["./sounds/11.mp3"],
-});
-const humbergSound = new Howl({
-  src: ["./sounds/5.mp3"],
-});
-const kamakiriSound = new Howl({
-  src: ["./sounds/6.mp3"],
-});
-const masterSound = new Howl({
-  src: ["./sounds/7.mp3"],
-});
-const milkSound = new Howl({
-  src: ["./sounds/8.mp3"],
-});
-const pencilSound = new Howl({
-  src: ["./sounds/9.mp3"],
-});
-const ramensoupSound = new Howl({
-  src: ["./sounds/10.mp3"],
-});
-const showsSound = new Howl({
-  src: ["./sounds/11.mp3"],
-});
-const tomatoSound = new Howl({
-  src: ["./sounds/12.mp3"],
-});
-const tyunSound = new Howl({
-  src: ["./sounds/13.mp3"],
-});
-const usagiSound = new Howl({
-  src: ["./sounds/14.mp3"],
-});
-const yakyuSound = new Howl({
-  src: ["./sounds/15.mp3"],
-});
+const loadSounds = (length) => {
+  const soundArray = new Array(length);
+
+  for (let i = 0; i < soundArray.length; i++) {
+    const relPath = "./sounds/";
+    const fileType = ".mp3";
+    const srcLink = `${relPath}${i}${fileType}`;
+    soundArray[i] = new Howl({
+      src: [`${srcLink}`],
+    });
+  }
+
+  return soundArray;
+};
+
+const soundArray = loadSounds(15);
 
 // canvas/setup
 
@@ -64,9 +35,9 @@ canvas.height = height;
 let score = 0;
 let gameFrame = 0;
 
-let densityModulo = 1;
+let densityModulo = 150;
 
-let feedbackModulo = 1000;
+let feedbackModulo = 1;
 
 ctx.font = "50px Arial";
 
@@ -215,21 +186,20 @@ function handleObjects() {
 
     if (objectArray[i]) {
       if (objectArray[i].distance < objectArray[i].radius + player.radius) {
-        console.log("collision!");
         // this line allows us to set the score only once per bubble, even though multiple collisions will continue to be registered
         if (!objectArray[i].counted) {
           if (objectArray[i].sound == "milk") {
-            milkSound.play();
+            soundArray[0].play();
           } else if (objectArray[i].sound == "folder") {
-            folderSound.play();
+            soundArray[1].play();
           } else if (objectArray[i].sound == "bear") {
-            bearSound.play();
+            soundArray[2].play();
           } else if (objectArray[i].sound == "bijo") {
-            bijoSound.play();
+            soundArray[3].play();
           } else if (objectArray[i].sound == "hero") {
-            heroSound.play();
+            soundArray[4].play();
           } else if (objectArray[i].sound == "humberg") {
-            humbergSound.play();
+            soundArray[5].play();
           }
           score++;
           objectArray[i].counted = true;
@@ -290,8 +260,17 @@ class Bubble {
   }
 }
 
-const folderImg = new Image();
-folderImg.src = "./images/folder.png";
+const makeImg = (name) => {
+  const img = new Image();
+  const path = "./images/";
+  const fileType = ".png";
+  const imgStr = `${path}${name}${fileType}`;
+  img.src = imgStr;
+
+  return img;
+};
+
+const folderImg = makeImg("folder");
 
 class Folder {
   constructor() {

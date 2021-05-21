@@ -35,3 +35,9 @@ increase density of objects depending on screen size
 7. Mechanics so that screen can eventually fill all the way up with objects
 
 8. Add sound fx over time - reverb, delay etc.
+
+// rules
+
+density > over time
+
+feedback ++ when you hit objects
