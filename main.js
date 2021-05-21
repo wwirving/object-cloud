@@ -2,6 +2,9 @@
 
 //sound loadins
 
+
+//ignore 4
+
 const bearSound = new Howl({
   src: ["./sounds/1.mp3"],
 });
@@ -12,7 +15,7 @@ const folderSound = new Howl({
   src: ["./sounds/3.mp3"],
 });
 const heroSound = new Howl({
-  src: ["./sounds/4.mp3"],
+  src: ["./sounds/11.mp3"],
 });
 const humbergSound = new Howl({
   src: ["./sounds/5.mp3"],
@@ -580,6 +583,74 @@ class Humberg {
     );
   }
 }
+
+
+/*
+
+defaults
+
+radius = 40
+speed = 5;
+sound = 'imagename'
+spriteWidth = 32
+spriteHeight = 33
+imgVar = heroIMG (variable)
+xadjust = 30
+yadjust = 30
+xScale = 1.5
+yScale = 1.5
+scaleMultipler = 1
+
+*/
+
+
+class ObjectCloud {
+  constructor(radius, speedMultiplier, sound, spriteWidth, spriteHeight, imgVar, xAdjust, yAdjust, xScale, yScale, scaleMultiplier) {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 100;
+    this.radius = radius * scaleMultiplier;
+    this.speed = Math.random() * speedMultiplier + 1;
+    this.distance;
+    this.counted = false;
+    this.sound = sound; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
+    this.frameX = 0;
+    this.frameY = 0;
+    this.frame = 0;
+    this.spriteWidth = spriteWidth;
+    this.spriteHeight = spriteHeight;
+  }
+
+  update() {
+    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
+    const dx = this.x - player.x;
+    const dy = this.y - player.y;
+    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
+    this.distance = Math.sqrt(dx * dx + dy * dy);
+  }
+
+  draw() {
+    ctx.fillStyle = "transparent";
+    ctx.beginPath();
+    //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.drawImage(
+      imgVar,
+      this.frameX * this.spriteWidth, //
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x - xAdjust, // adjust here to align item with collision area
+      this.y - yAdjust, // and here (i.e. - 60)
+      this.spriteWidth * 1.2 * scaleMultiplier, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight * 1.2 * scaleMultiplier
+    );
+  }
+}
+
 
 // resizing, call to action
 
