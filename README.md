@@ -16,13 +16,17 @@ Browser game built using HTML, CSS and JS
 
 <!-- 2. Configure different sound for different objects -->
 
+create switch statement for different objects (depending on input integer)
+
 3. Add ideas class (with sound)
 
-4. Configure mechanics so that ideas + score and object collision reduces speed
+4. Configure mechanics so that collision increases feedback
 
 ++) Add background soundscape
 
 ++) add object rotation (at random) and size (by scale factor on both radius and object scaling)
+
+++ random speed of objects (1-10);
 
 5. Add more objects
 

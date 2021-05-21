@@ -54,6 +54,27 @@ const makeImg = (name) => {
   return img;
 };
 
+const shuffle = (array) => {
+  const newArray = [...array];
+  var currentIndex = newArray.length,
+    temporaryValue,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = newArray[currentIndex];
+    newArray[currentIndex] = newArray[randomIndex];
+    newArray[randomIndex] = temporaryValue;
+  }
+
+  return newArray;
+};
+
 // SETUP
 
 const canvas = document.getElementById("c");
@@ -86,11 +107,10 @@ let feedbackModulo = 1;
 // MOUSE INTERACTIVITY
 
 // get canvas position so we can use it to scale coordinates
+// .getBoundingClientRect measures current size and position of canvas element relative to parent
+
 let canvasPosition = canvas.getBoundingClientRect();
 
-console.log(canvasPosition);
-
-// measures current size and position of canvas element
 const mouse = {
   x: canvas.width / 2, // start in middle of canvas
   y: canvas.height / 2,
@@ -102,17 +122,15 @@ canvas.addEventListener("mousedown", (event) => {
   mouse.click = true;
   mouse.x = event.x - canvasPosition.left;
   mouse.y = event.y - canvasPosition.top;
-  console.log(mouse.x, mouse.y);
 });
 
 canvas.addEventListener("mouseup", () => {
   mouse.click = false;
 });
 
-// Player character
+// PLAYER/AVATAR
 
-const playerImg = new Image();
-playerImg.src = "./images/player.png";
+const playerImg = makeImg("player");
 
 class Player {
   constructor() {
@@ -170,39 +188,221 @@ class Player {
   }
 }
 
-// object handling
+// OBJECT HANDLING
+
+const objectLoader = [
+  "bear",
+  "bijo",
+  "folder",
+  "hero",
+  "humberg",
+  "kamakiri",
+  "master",
+  "milk",
+  "pencil",
+  "ramensoup",
+  "shows",
+  "tomato",
+  "tyun",
+  "usagi",
+  "yakyu",
+];
 
 const objectArray = [];
+
+let shuffledArray = shuffle(objectLoader);
+console.log(shuffledArray.length);
 
 function handleObjects() {
   if (gameFrame % densityModulo == 0) {
     //every 50 frames..
-    objectArray.push(new Milk());
-  }
 
-  if (gameFrame % densityModulo == 0) {
-    //every 50 frames..
-    objectArray.push(new Bear());
-  }
+    if (shuffledArray.length < 1) {
+      shuffledArray = shuffledArray = shuffle(objectLoader);
+    } else {
+      shuffledArray.pop();
+    }
 
-  if (gameFrame % densityModulo == 0) {
-    //every 50 frames..
-    objectArray.push(new Folder());
-  }
+    let input = shuffledArray[shuffledArray.length - 1];
 
-  if (gameFrame % densityModulo == 0) {
-    //every 50 frames..
-    objectArray.push(new Hero());
-  }
-
-  if (gameFrame % densityModulo == 0) {
-    //every 50 frames..
-    objectArray.push(new Bijo());
-  }
-
-  if (gameFrame % densityModulo == 0) {
-    //every 50 frames..
-    objectArray.push(new Humberg());
+    switch (input) {
+      case "bear":
+        const bearImg = makeImg("bear");
+        objectArray.push(
+          new ObjectCloud(40, 5, "bear", 50, 50, bearImg, 30, 30, 1.2, 1.2, 1)
+        );
+        break;
+      case "folder":
+        const folderImg = makeImg("folder");
+        objectArray.push(
+          new ObjectCloud(
+            40,
+            1,
+            "folder",
+            182,
+            179,
+            folderImg,
+            35,
+            38,
+            0.8,
+            0.8,
+            1
+          )
+        );
+        break;
+      case "hero":
+        const heroImg = makeImg("hero");
+        objectArray.push(
+          new ObjectCloud(40, 1, "hero", 32, 70, heroImg, 20, 35, 1, 1, 1)
+        );
+        break;
+      case "humberg":
+        const humbergImg = makeImg("humberg");
+        objectArray.push(
+          new ObjectCloud(
+            40,
+            1,
+            "humberg",
+            60,
+            32,
+            humbergImg,
+            32,
+            20,
+            1.2,
+            1.2,
+            1
+          )
+        );
+        break;
+      case "kamakiri":
+        const kamakiriImg = makeImg("kamakiri");
+        objectArray.push(
+          new ObjectCloud(
+            40,
+            1,
+            "kamakiri",
+            43,
+            40,
+            kamakiriImg,
+            32,
+            35,
+            1.7,
+            1.7,
+            1
+          )
+        );
+        break;
+      case "master":
+        const masterImg = makeImg("master");
+        objectArray.push(
+          new ObjectCloud(
+            40,
+            5,
+            "master",
+            36,
+            56,
+            masterImg,
+            25,
+            40,
+            1.4,
+            1.4,
+            1
+          )
+        );
+        break;
+      case "milk":
+        const milkImg = makeImg("milk");
+        objectArray.push(
+          new ObjectCloud(40, 5, "milk", 19, 35, milkImg, 20, 35, 2, 2, 1)
+        );
+        break;
+      case "pencil":
+        const pencilImg = makeImg("pencil");
+        objectArray.push(
+          new ObjectCloud(
+            40,
+            5,
+            "pencil",
+            27,
+            10,
+            pencilImg,
+            32,
+            15,
+            2.5,
+            2.5,
+            1
+          )
+        );
+        break;
+      case "ramensoup":
+        const ramensoupImg = makeImg("ramensoup");
+        objectArray.push(
+          new ObjectCloud(
+            40,
+            5,
+            "ramensoup",
+            32,
+            32,
+            ramensoupImg,
+            35,
+            35,
+            2.2,
+            2.2,
+            1
+          )
+        );
+        break;
+      case "shows":
+        const showsImg = makeImg("shows");
+        objectArray.push(
+          new ObjectCloud(40, 5, "shows", 45, 46, showsImg, 35, 32, 1.5, 1.5, 1)
+        );
+        break;
+      case "tomato":
+        const tomatoImg = makeImg("tomato");
+        objectArray.push(
+          new ObjectCloud(
+            40,
+            5,
+            "tomato",
+            18,
+            16,
+            tomatoImg,
+            30,
+            30,
+            3.5,
+            3.5,
+            1
+          )
+        );
+        break;
+      case "tyun":
+        const tyunImg = makeImg("tyun");
+        objectArray.push(
+          new ObjectCloud(40, 5, "tyun", 32, 31, tyunImg, 32, 32, 2, 2, 1)
+        );
+        break;
+      case "usagi":
+        const usagiImg = makeImg("usagi");
+        objectArray.push(
+          new ObjectCloud(40, 5, "usagi", 36, 38, usagiImg, 35, 38, 2, 2, 1)
+        );
+        break;
+      case "yakyu":
+        const yakyuImg = makeImg("yakyu");
+        objectArray.push(
+          new ObjectCloud(40, 5, "yakyu", 60, 60, yakyuImg, 30, 30, 1, 1, 1)
+        );
+        break;
+      case "bijo":
+        const bijoImg = makeImg("bijo");
+        objectArray.push(
+          new ObjectCloud(40, 5, "bijo", 30, 60, bijoImg, 30, 40, 1.5, 1.5, 1)
+        );
+        break;
+      default:
+      // code
+    }
   }
 
   for (let i = 0; i < objectArray.length; i++) {
@@ -640,6 +840,12 @@ class ObjectCloud {
     this.frame = 0;
     this.spriteWidth = spriteWidth;
     this.spriteHeight = spriteHeight;
+    this.imgVar = imgVar;
+    this.xAdjust = xAdjust;
+    this.yAdjust = yAdjust;
+    this.xScale = xScale;
+    this.yScale = yScale;
+    this.scaleMultiplier = scaleMultiplier;
   }
 
   update() {
@@ -653,21 +859,21 @@ class ObjectCloud {
   draw() {
     ctx.fillStyle = "transparent";
     ctx.beginPath();
-    //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
     ctx.closePath();
     ctx.stroke();
 
     ctx.drawImage(
-      imgVar,
+      this.imgVar,
       this.frameX * this.spriteWidth, //
       this.frameY * this.spriteHeight,
       this.spriteWidth,
       this.spriteHeight,
-      this.x - xAdjust, // adjust here to align item with collision area
-      this.y - yAdjust, // and here (i.e. - 60)
-      this.spriteWidth * 1.2 * scaleMultiplier, // scale here if needed (i.e. this.spriteWidth/4)
-      this.spriteHeight * 1.2 * scaleMultiplier
+      this.x - this.xAdjust, // adjust here to align item with collision area
+      this.y - this.yAdjust, // and here (i.e. - 60)
+      this.spriteWidth * this.xScale * this.scaleMultiplier, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight * this.yScale * this.scaleMultiplier
     );
   }
 }
