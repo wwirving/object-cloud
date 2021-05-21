@@ -10,11 +10,11 @@ Browser game built using HTML, CSS and JS
 
 <!-- 1. Add 3 different objects -->
 
-++ function to generate random integer between 1-15 in order to select class
+<!-- ++ function to generate random integer between 1-15 in order to select class -->
 
-++ create sound-loading function array
+<!-- ++ create sound-loading function array -->
 
-2. Configure different sound for different objects
+<!-- 2. Configure different sound for different objects -->
 
 3. Add ideas class (with sound)
 
@@ -35,6 +35,8 @@ increase density of objects depending on screen size
 7. Mechanics so that screen can eventually fill all the way up with objects
 
 8. Add sound fx over time - reverb, delay etc.
+
+++ add font scaling function // seperate canvas for score
 
 // rules
 

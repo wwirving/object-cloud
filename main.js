@@ -1,8 +1,34 @@
 // canvas setup
 
-//sound loadins
+// FUNCTIONS
 
-//ignore 4
+const getRandom = (upperLimit) => {
+  function shuffle(array) {
+    var currentIndex = array.length,
+      temporaryValue,
+      randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
+
+  const arrayNum = [...Array(upperLimit)].map((_, i) => i);
+
+  const ranNums = shuffle(arrayNum);
+
+  return ranNums;
+};
 
 const loadSounds = (length) => {
   const soundArray = new Array(length);
@@ -19,9 +45,16 @@ const loadSounds = (length) => {
   return soundArray;
 };
 
-const soundArray = loadSounds(15);
+const makeImg = (name) => {
+  const img = new Image();
+  const path = "./images/";
+  const fileType = ".png";
+  const imgStr = `${path}${name}${fileType}`;
+  img.src = imgStr;
+  return img;
+};
 
-// canvas/setup
+// SETUP
 
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
@@ -32,29 +65,30 @@ let height = 500;
 canvas.width = width;
 canvas.height = height;
 
-let score = 0;
-let gameFrame = 0;
-
-let densityModulo = 150;
-
-let feedbackModulo = 1;
-
-ctx.font = "50px Arial";
-
 let resizeCanvas = () => {
   width = window.innerWidth;
   height = window.innerHeight;
   canvas.width = width - 100;
   canvas.height = height - 104;
-  ctx.font = "40px myFont";
+  ctx.font = "20px myFont";
 };
 
 resizeCanvas();
 
-// mouse interactivity
+const soundArray = loadSounds(15);
+
+let score = 0;
+let gameFrame = 0;
+
+let densityModulo = 150;
+let feedbackModulo = 1;
+
+// MOUSE INTERACTIVITY
 
 // get canvas position so we can use it to scale coordinates
 let canvasPosition = canvas.getBoundingClientRect();
+
+console.log(canvasPosition);
 
 // measures current size and position of canvas element
 const mouse = {
@@ -259,16 +293,6 @@ class Bubble {
     ctx.stroke();
   }
 }
-
-const makeImg = (name) => {
-  const img = new Image();
-  const path = "./images/";
-  const fileType = ".png";
-  const imgStr = `${path}${name}${fileType}`;
-  img.src = imgStr;
-
-  return img;
-};
 
 const folderImg = makeImg("folder");
 
