@@ -2,7 +2,6 @@
 
 //sound loadins
 
-
 //ignore 4
 
 const bearSound = new Howl({
@@ -64,6 +63,11 @@ canvas.height = height;
 
 let score = 0;
 let gameFrame = 0;
+
+let densityModulo = 1;
+
+let feedbackModulo = 1000;
+
 ctx.font = "50px Arial";
 
 let resizeCanvas = () => {
@@ -166,32 +170,32 @@ class Player {
 const objectArray = [];
 
 function handleObjects() {
-  if (gameFrame % 50 == 0) {
+  if (gameFrame % densityModulo == 0) {
     //every 50 frames..
     objectArray.push(new Milk());
   }
 
-  if (gameFrame % 50 == 0) {
+  if (gameFrame % densityModulo == 0) {
     //every 50 frames..
     objectArray.push(new Bear());
   }
 
-  if (gameFrame % 50 == 0) {
+  if (gameFrame % densityModulo == 0) {
     //every 50 frames..
     objectArray.push(new Folder());
   }
 
-  if (gameFrame % 50 == 0) {
+  if (gameFrame % densityModulo == 0) {
     //every 50 frames..
     objectArray.push(new Hero());
   }
 
-  if (gameFrame % 50 == 0) {
+  if (gameFrame % densityModulo == 0) {
     //every 50 frames..
     objectArray.push(new Bijo());
   }
 
-  if (gameFrame % 50 == 0) {
+  if (gameFrame % densityModulo == 0) {
     //every 50 frames..
     objectArray.push(new Humberg());
   }
@@ -240,7 +244,9 @@ function handleObjects() {
 // animation loop
 
 function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas as part of render loop
+  if (gameFrame % feedbackModulo === 0) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas as part of render loop
+  }
   player.update();
   player.draw();
   handleObjects();
@@ -534,6 +540,8 @@ class Hero {
   }
 }
 
+const makeImage = (imagename) => {};
+
 const humbergImg = new Image();
 humbergImg.src = "./images/humberg.png";
 
@@ -584,7 +592,6 @@ class Humberg {
   }
 }
 
-
 /*
 
 defaults
@@ -603,9 +610,20 @@ scaleMultipler = 1
 
 */
 
-
 class ObjectCloud {
-  constructor(radius, speedMultiplier, sound, spriteWidth, spriteHeight, imgVar, xAdjust, yAdjust, xScale, yScale, scaleMultiplier) {
+  constructor(
+    radius,
+    speedMultiplier,
+    sound,
+    spriteWidth,
+    spriteHeight,
+    imgVar,
+    xAdjust,
+    yAdjust,
+    xScale,
+    yScale,
+    scaleMultiplier
+  ) {
     this.x = Math.random() * canvas.width;
     this.y = canvas.height + 100;
     this.radius = radius * scaleMultiplier;
@@ -650,7 +668,6 @@ class ObjectCloud {
     );
   }
 }
-
 
 // resizing, call to action
 
