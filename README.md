@@ -12,6 +12,8 @@ Browser game built using HTML, CSS and JS
 
 ++ function to generate random integer between 1-15 in order to select class
 
+++ create sound-loading function array
+
 2. Configure different sound for different objects
 
 3. Add ideas class (with sound)
@@ -27,6 +29,8 @@ Browser game built using HTML, CSS and JS
 6. Change direction of avatar on click
 
 ++) refine sound track/sound components
+
+increase density of objects depending on screen size
 
 7. Mechanics so that screen can eventually fill all the way up with objects
 
