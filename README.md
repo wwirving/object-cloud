@@ -47,3 +47,5 @@ increase density of objects depending on screen size
 density > over time
 
 feedback ++ when you hit objects
+
+++ create imports/exports for functions and write a test for some of them

@@ -1,94 +1,25 @@
 // canvas setup
 
-// FUNCTIONS
+// GLOBAL VARIABLES
 
-const getRandom = (upperLimit) => {
-  function shuffle(array) {
-    var currentIndex = array.length,
-      temporaryValue,
-      randomIndex;
+let score = 0;
+let gameFrame = 0;
 
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
+let densityModulo = 50;
+let feedbackModulo = 1;
 
-      // And swap it with the current element.
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
-    }
+// GLOBAL FUNCTIONS
 
-    return array;
-  }
+import { shuffleArr, getRandom, loadSounds, makeImg } from "./functions.js";
 
-  const arrayNum = [...Array(upperLimit)].map((_, i) => i);
-
-  const ranNums = shuffle(arrayNum);
-
-  return ranNums;
-};
-
-const loadSounds = (length) => {
-  const soundArray = new Array(length);
-
-  for (let i = 0; i < soundArray.length; i++) {
-    const relPath = "./sounds/";
-    const fileType = ".mp3";
-    const srcLink = `${relPath}${i}${fileType}`;
-    soundArray[i] = new Howl({
-      src: [`${srcLink}`],
-    });
-  }
-
-  return soundArray;
-};
-
-const makeImg = (name) => {
-  const img = new Image();
-  const path = "./images/";
-  const fileType = ".png";
-  const imgStr = `${path}${name}${fileType}`;
-  img.src = imgStr;
-  return img;
-};
-
-const shuffle = (array) => {
-  const newArray = [...array];
-  var currentIndex = newArray.length,
-    temporaryValue,
-    randomIndex;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = newArray[currentIndex];
-    newArray[currentIndex] = newArray[randomIndex];
-    newArray[randomIndex] = temporaryValue;
-  }
-
-  return newArray;
-};
-
-// SETUP
+// CANVAS SETUP
 
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
 
-let width = 800;
-let height = 500;
-
-canvas.width = width;
-canvas.height = height;
-
-let resizeCanvas = () => {
-  width = window.innerWidth;
-  height = window.innerHeight;
+const resizeCanvas = () => {
+  let width = window.innerWidth;
+  let height = window.innerHeight;
   canvas.width = width - 100;
   canvas.height = height - 104;
   ctx.font = "20px myFont";
@@ -96,18 +27,9 @@ let resizeCanvas = () => {
 
 resizeCanvas();
 
-const soundArray = loadSounds(15);
-
-let score = 0;
-let gameFrame = 0;
-
-let densityModulo = 150;
-let feedbackModulo = 1;
-
 // MOUSE INTERACTIVITY
 
-// get canvas position so we can use it to scale coordinates
-// .getBoundingClientRect measures current size and position of canvas element relative to parent
+// .getBoundingClientRect measures current size and position of canvas element relative to parent (body)
 
 let canvasPosition = canvas.getBoundingClientRect();
 
@@ -128,7 +50,7 @@ canvas.addEventListener("mouseup", () => {
   mouse.click = false;
 });
 
-// PLAYER/AVATAR
+// PLAYER/AVATAR CLASS
 
 const playerImg = makeImg("player");
 
@@ -188,6 +110,73 @@ class Player {
   }
 }
 
+// OBJECT CLOUD CLASS
+
+class ObjectCloud {
+  constructor(
+    radius,
+    speedMultiplier,
+    sound,
+    spriteWidth,
+    spriteHeight,
+    imgVar,
+    xAdjust,
+    yAdjust,
+    xScale,
+    yScale,
+    scaleMultiplier
+  ) {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 100;
+    this.radius = radius * scaleMultiplier;
+    this.speed = Math.random() * speedMultiplier + 1;
+    this.distance;
+    this.counted = false;
+    this.sound = sound; //Math.random() <= 0.5 ? "sound1" : "sound2";
+    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
+    this.frameX = 0;
+    this.frameY = 0;
+    this.frame = 0;
+    this.spriteWidth = spriteWidth;
+    this.spriteHeight = spriteHeight;
+    this.imgVar = imgVar;
+    this.xAdjust = xAdjust;
+    this.yAdjust = yAdjust;
+    this.xScale = xScale;
+    this.yScale = yScale;
+    this.scaleMultiplier = scaleMultiplier;
+  }
+
+  update() {
+    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
+    const dx = this.x - player.x;
+    const dy = this.y - player.y;
+    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
+    this.distance = Math.sqrt(dx * dx + dy * dy);
+  }
+
+  draw() {
+    ctx.fillStyle = "transparent";
+    ctx.beginPath();
+    //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.drawImage(
+      this.imgVar,
+      this.frameX * this.spriteWidth, //
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x - this.xAdjust, // adjust here to align item with collision area
+      this.y - this.yAdjust, // and here (i.e. - 60)
+      this.spriteWidth * this.xScale * this.scaleMultiplier, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight * this.yScale * this.scaleMultiplier
+    );
+  }
+}
+
 // OBJECT HANDLING
 
 const objectLoader = [
@@ -208,17 +197,18 @@ const objectLoader = [
   "yakyu",
 ];
 
+const soundArray = loadSounds(15);
+
 const objectArray = [];
 
-let shuffledArray = shuffle(objectLoader);
-console.log(shuffledArray.length);
+let shuffledArray = shuffleArr(objectLoader);
 
 function handleObjects() {
   if (gameFrame % densityModulo == 0) {
     //every 50 frames..
 
     if (shuffledArray.length < 1) {
-      shuffledArray = shuffledArray = shuffle(objectLoader);
+      shuffledArray = shuffledArray = shuffleArr(objectLoader);
     } else {
       shuffledArray.pop();
     }
@@ -445,9 +435,9 @@ function handleObjects() {
   }
 }
 
-// animation loop
+// ANIMATION LOOP
 
-function animate() {
+const animate = () => {
   if (gameFrame % feedbackModulo === 0) {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas as part of render loop
   }
@@ -461,422 +451,7 @@ function animate() {
   ctx.fillText("TIME ELAPSED - " + gameFrame, 20, 120);
   gameFrame++; // increase game frame as game continues
   requestAnimationFrame(animate);
-}
-
-// classes (objects in game)
-class Bubble {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + 100;
-    this.radius = 50;
-    this.speed = Math.random() * 5 + 1;
-    this.distance;
-    this.counted = false;
-    this.sound = "sound1"; //Math.random() <= 0.5 ? "sound1" : "sound2";
-    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
-  }
-
-  update() {
-    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
-    const dx = this.x - player.x;
-    const dy = this.y - player.y;
-    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
-    this.distance = Math.sqrt(dx * dx + dy * dy);
-  }
-
-  draw() {
-    ctx.fillStyle = "blue";
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
-  }
-}
-
-const folderImg = makeImg("folder");
-
-class Folder {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + 100;
-    this.radius = 50;
-    this.speed = Math.random() * 5 + 1;
-    this.distance;
-    this.counted = false;
-    this.sound = "folder"; //Math.random() <= 0.5 ? "sound1" : "sound2";
-    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
-    this.frameX = 0;
-    this.frameY = 0;
-    this.frame = 0;
-    this.spriteWidth = 182;
-    this.spriteHeight = 179;
-  }
-
-  update() {
-    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
-    const dx = this.x - player.x;
-    const dy = this.y - player.y;
-    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
-    this.distance = Math.sqrt(dx * dx + dy * dy);
-  }
-
-  draw() {
-    ctx.fillStyle = "transparent";
-    ctx.beginPath();
-    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.drawImage(
-      folderImg,
-      this.frameX * this.spriteWidth, //
-      this.frameY * this.spriteHeight,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x - 40, // adjust here to align item with collision area
-      this.y - 50, // and here (i.e. - 60)
-      this.spriteWidth, // scale here if needed (i.e. this.spriteWidth/4)
-      this.spriteHeight
-    );
-  }
-}
-
-const bearImg = new Image();
-bearImg.src = "./images/bear.png";
-
-class Bear {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + 100;
-    this.radius = 50;
-    this.speed = Math.random() * 5 + 1;
-    this.distance;
-    this.counted = false;
-    this.sound = "bear"; //Math.random() <= 0.5 ? "sound1" : "sound2";
-    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
-    this.frameX = 0;
-    this.frameY = 0;
-    this.frame = 0;
-    this.spriteWidth = 50;
-    this.spriteHeight = 50;
-  }
-
-  update() {
-    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
-    const dx = this.x - player.x;
-    const dy = this.y - player.y;
-    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
-    this.distance = Math.sqrt(dx * dx + dy * dy);
-  }
-
-  draw() {
-    ctx.fillStyle = "transparent";
-    ctx.beginPath();
-    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.drawImage(
-      bearImg,
-      this.frameX * this.spriteWidth, //
-      this.frameY * this.spriteHeight,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x - 40, // adjust here to align item with collision area
-      this.y - 50, // and here (i.e. - 60)
-      this.spriteWidth * 1.5, // scale here if needed (i.e. this.spriteWidth/4)
-      this.spriteHeight * 1.5
-    );
-  }
-}
-
-const milkImg = new Image();
-milkImg.src = "./images/milk.png";
-
-class Milk {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + 100;
-    this.radius = 50;
-    this.speed = Math.random() * 5 + 1;
-    this.distance;
-    this.counted = false;
-    this.sound = "milk"; //Math.random() <= 0.5 ? "sound1" : "sound2";
-    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
-    this.frameX = 0;
-    this.frameY = 0;
-    this.frame = 0;
-    this.spriteWidth = 19;
-    this.spriteHeight = 35;
-  }
-
-  update() {
-    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
-    const dx = this.x - player.x;
-    const dy = this.y - player.y;
-    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
-    this.distance = Math.sqrt(dx * dx + dy * dy);
-  }
-
-  draw() {
-    ctx.fillStyle = "transparent";
-    ctx.beginPath();
-    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.drawImage(
-      milkImg,
-      this.frameX * this.spriteWidth, //
-      this.frameY * this.spriteHeight,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x - 40, // adjust here to align item with collision area
-      this.y - 50, // and here (i.e. - 60)
-      this.spriteWidth * 2, // scale here if needed (i.e. this.spriteWidth/4)
-      this.spriteHeight * 2
-    );
-  }
-}
-
-const bijoImg = new Image();
-bijoImg.src = "./images/bijo.png";
-
-class Bijo {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + 100;
-    this.radius = 40;
-    this.speed = Math.random() * 5 + 1;
-    this.distance;
-    this.counted = false;
-    this.sound = "bijo"; //Math.random() <= 0.5 ? "sound1" : "sound2";
-    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
-    this.frameX = 0;
-    this.frameY = 0;
-    this.frame = 0;
-    this.spriteWidth = 30;
-    this.spriteHeight = 60;
-  }
-
-  update() {
-    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
-    const dx = this.x - player.x;
-    const dy = this.y - player.y;
-    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
-    this.distance = Math.sqrt(dx * dx + dy * dy);
-  }
-
-  draw() {
-    ctx.fillStyle = "transparent";
-    ctx.beginPath();
-    //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.drawImage(
-      bijoImg,
-      this.frameX * this.spriteWidth, //
-      this.frameY * this.spriteHeight,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x - 30, // adjust here to align item with collision area
-      this.y - 40, // and here (i.e. - 60)
-      this.spriteWidth * 1.5, // scale here if needed (i.e. this.spriteWidth/4)
-      this.spriteHeight * 1.5
-    );
-  }
-}
-
-const heroImg = new Image();
-heroImg.src = "./images/hero.png";
-
-class Hero {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + 100;
-    this.radius = 40;
-    this.speed = Math.random() * 5 + 1;
-    this.distance;
-    this.counted = false;
-    this.sound = "hero"; //Math.random() <= 0.5 ? "sound1" : "sound2";
-    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
-    this.frameX = 0;
-    this.frameY = 0;
-    this.frame = 0;
-    this.spriteWidth = 32;
-    this.spriteHeight = 70;
-  }
-
-  update() {
-    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
-    const dx = this.x - player.x;
-    const dy = this.y - player.y;
-    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
-    this.distance = Math.sqrt(dx * dx + dy * dy);
-  }
-
-  draw() {
-    ctx.fillStyle = "transparent";
-    ctx.beginPath();
-    //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.drawImage(
-      heroImg,
-      this.frameX * this.spriteWidth, //
-      this.frameY * this.spriteHeight,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x - 20, // adjust here to align item with collision area
-      this.y - 35, // and here (i.e. - 60)
-      this.spriteWidth * 1, // scale here if needed (i.e. this.spriteWidth/4)
-      this.spriteHeight * 1
-    );
-  }
-}
-
-const makeImage = (imagename) => {};
-
-const humbergImg = new Image();
-humbergImg.src = "./images/humberg.png";
-
-class Humberg {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + 100;
-    this.radius = 40;
-    this.speed = Math.random() * 5 + 1;
-    this.distance;
-    this.counted = false;
-    this.sound = "humberg"; //Math.random() <= 0.5 ? "sound1" : "sound2";
-    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
-    this.frameX = 0;
-    this.frameY = 0;
-    this.frame = 0;
-    this.spriteWidth = 60;
-    this.spriteHeight = 32;
-  }
-
-  update() {
-    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
-    const dx = this.x - player.x;
-    const dy = this.y - player.y;
-    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
-    this.distance = Math.sqrt(dx * dx + dy * dy);
-  }
-
-  draw() {
-    ctx.fillStyle = "transparent";
-    ctx.beginPath();
-    //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.drawImage(
-      humbergImg,
-      this.frameX * this.spriteWidth, //
-      this.frameY * this.spriteHeight,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x - 35, // adjust here to align item with collision area
-      this.y - 20, // and here (i.e. - 60)
-      this.spriteWidth * 1.2, // scale here if needed (i.e. this.spriteWidth/4)
-      this.spriteHeight * 1.2
-    );
-  }
-}
-
-/*
-
-defaults
-
-radius = 40
-speed = 5;
-sound = 'imagename'
-spriteWidth = 32
-spriteHeight = 33
-imgVar = heroIMG (variable)
-xadjust = 30
-yadjust = 30
-xScale = 1.5
-yScale = 1.5
-scaleMultipler = 1
-
-*/
-
-class ObjectCloud {
-  constructor(
-    radius,
-    speedMultiplier,
-    sound,
-    spriteWidth,
-    spriteHeight,
-    imgVar,
-    xAdjust,
-    yAdjust,
-    xScale,
-    yScale,
-    scaleMultiplier
-  ) {
-    this.x = Math.random() * canvas.width;
-    this.y = canvas.height + 100;
-    this.radius = radius * scaleMultiplier;
-    this.speed = Math.random() * speedMultiplier + 1;
-    this.distance;
-    this.counted = false;
-    this.sound = sound; //Math.random() <= 0.5 ? "sound1" : "sound2";
-    // ternary operator, if value produced by Math.random is less than 0.5, assign 'sound1' else assign 'sound2'
-    this.frameX = 0;
-    this.frameY = 0;
-    this.frame = 0;
-    this.spriteWidth = spriteWidth;
-    this.spriteHeight = spriteHeight;
-    this.imgVar = imgVar;
-    this.xAdjust = xAdjust;
-    this.yAdjust = yAdjust;
-    this.xScale = xScale;
-    this.yScale = yScale;
-    this.scaleMultiplier = scaleMultiplier;
-  }
-
-  update() {
-    this.y -= this.speed; //moves bubbles up the y axis depending on their speed value
-    const dx = this.x - player.x;
-    const dy = this.y - player.y;
-    // updating distance for each bubble as a function of its current distance from bubble allows us to create a collision detection. NB - this must be called on the animate loop in order to work!
-    this.distance = Math.sqrt(dx * dx + dy * dy);
-  }
-
-  draw() {
-    ctx.fillStyle = "transparent";
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.drawImage(
-      this.imgVar,
-      this.frameX * this.spriteWidth, //
-      this.frameY * this.spriteHeight,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x - this.xAdjust, // adjust here to align item with collision area
-      this.y - this.yAdjust, // and here (i.e. - 60)
-      this.spriteWidth * this.xScale * this.scaleMultiplier, // scale here if needed (i.e. this.spriteWidth/4)
-      this.spriteHeight * this.yScale * this.scaleMultiplier
-    );
-  }
-}
+};
 
 // resizing, call to action
 

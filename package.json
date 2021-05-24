@@ -8,6 +8,7 @@
 		"watch:scss": "sass --watch main.scss main.css"
 	},
 	"dependencies": {
+		"babel": "^6.23.0",
 		"howler": "^2.2.1"
 	}
 }
