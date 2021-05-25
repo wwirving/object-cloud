@@ -1,8 +1,16 @@
 // sound setup
+const theme = new Howl({
+  src: "./ambience/objectcld.start.mp3",
+  volume: 0.5,
+  loop: true,
+});
+const ambience = new Howl({ src: "./ambience/ambience1.mp3", volume: 0.6 });
 
-const sound = new Howl({ src: "./sounds/1.mp3" });
+theme.play();
+ambience.play();
 
 const tuna = new Tuna(Howler.ctx);
+
 const delay = new tuna.PingPongDelay({
   wetLevel: 0.5, //0 to 1
   feedback: 0.3, //0 to 1
@@ -10,11 +18,22 @@ const delay = new tuna.PingPongDelay({
   delayTimeRight: 400, //1 to 10000 (milliseconds)
 });
 
+const convolver = new tuna.Convolver({
+  highCut: 22050, //20 to 22050
+  lowCut: 20, //20 to 22050
+  dryLevel: 0.5, //0 to 1+
+  wetLevel: 1, //0 to 1+
+  level: 1, //0 to 1+, adjusts total output of both wet and dry
+  impulse: "./ambience/impulse.wav", //the path to your impulse response
+  bypass: 0,
+});
+
 Howler.addEffect(delay);
+Howler.addEffect(convolver);
 
 // GLOBAL VARIABLES
 
-let score = 0;
+let score = 100;
 let gameFrame = 0;
 
 let densityModulo = 20;
@@ -70,7 +89,7 @@ class Player {
   constructor() {
     this.x = canvas.width / 2; //start coordinates
     this.y = canvas.height / 2;
-    this.radius = 86;
+    this.radius = 48;
     this.angle = 0;
     this.frameX = 0;
     this.frameY = 0;
@@ -99,7 +118,7 @@ class Player {
       ctx.beginPath();
       ctx.moveTo(this.x, this.y);
       ctx.lineTo(mouse.x, mouse.y);
-      ctx.stroke();
+      //ctx.stroke();
     }
     ctx.fillStyle = "transparent";
     ctx.beginPath();
@@ -114,10 +133,10 @@ class Player {
       this.frameY * this.spriteHeight,
       this.spriteWidth,
       this.spriteHeight,
-      this.x - 100, // adjust here to align item with collision area
-      this.y - 100, // and here (i.e. - 60)
-      this.spriteWidth, // scale here if needed (i.e. this.spriteWidth/4)
-      this.spriteHeight
+      this.x - 60, // adjust here to align item with collision area
+      this.y - 60, // and here (i.e. - 60)
+      this.spriteWidth * 0.6, // scale here if needed (i.e. this.spriteWidth/4)
+      this.spriteHeight * 0.6
     );
   }
 }
@@ -455,19 +474,24 @@ const handleObjects = () => {
           } else if (objectArray[i].sound == "usagi") {
             soundArray[14].play();
           }
-          score++;
+          score--;
 
           if (densityModulo > 1) {
             densityModulo--;
           }
           feedbackModulo++;
-          console.log(feedbackModulo);
+
+          if (densityModulo % 0 == 0) {
+            delay.delayTimeLeft += 10;
+          } else {
+            delay.delayTimeRight += 10;
+          }
+
           objectArray[i].counted = true;
           objectArray.splice(i, 1); //by calling splice, we remove i element from the array upon collision (1 just means only this one)
         }
       }
     }
-    // collision detection, using distance of each bubble agaisnt player radius
   }
 };
 
@@ -480,13 +504,16 @@ const animate = () => {
   player.update();
   player.draw();
   handleObjects();
-
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-  ctx.fillText("IDEAS - " + score, 20, 50);
+  ctx.fillText("SCORE - " + score, 20, 50);
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
   ctx.fillText("TIME ELAPSED - " + gameFrame, 20, 120);
   gameFrame++; // increase game frame as game continues
   requestAnimationFrame(animate);
+  if (score < 0) {
+    theme.stop();
+    alert("oh no!");
+  }
 };
 
 // resizing, call to action

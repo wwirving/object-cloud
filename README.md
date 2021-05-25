@@ -18,15 +18,15 @@ Browser game built using HTML, CSS and JS
 
 <!-- Configure mechanics so that collision increases feedback -->
 
-++) Add background soundscape(s)
+<!-- ++) Add background soundscape(s) -->
 
 add loading and closing screens, final score and option to replay
 
 ++ random speed of objects (1-10);
 
-++ change object path (via. touchdesigner)
+++ change object path (via. touchdesigner) over time
 
-increase density of objects depending on screen size
+increase density of objects and settings depending on screen size
 
 8. Add sound fx over time - reverb, delay etc. (or increase reverb with modulo?)
 
