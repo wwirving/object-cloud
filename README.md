@@ -16,39 +16,24 @@ Browser game built using HTML, CSS and JS
 
 <!-- 2. Configure different sound for different objects -->
 
-create switch statement for different objects (depending on input integer)
+<!-- Configure mechanics so that collision increases feedback -->
 
-4. Configure mechanics so that collision increases feedback
+++) Add background soundscape(s)
 
-++) Add background soundscape
-
-++) add object rotation (at random) and size (by scale factor on both radius and object scaling)
+add loading and closing screens, final score and option to replay
 
 ++ random speed of objects (1-10);
 
 ++ change object path (via. touchdesigner)
 
-5. Add more objects
-
-6. Change choice of avatar (on load)
-
-++) refine sound track/sound components
-
 increase density of objects depending on screen size
 
-7. Mechanics so that screen can eventually fill all the way up with objects
+8. Add sound fx over time - reverb, delay etc. (or increase reverb with modulo?)
 
-8. Add sound fx over time - reverb, delay etc.
-
-scale objects and player for smaller browser
-
-++ add font scaling function // seperate canvas for score
-?? change path of objects (sometimes arising from horizontal direction)?
+scale objects and player for smaller browser, change density cutoff for screen size?
 
 // rules
 
 density > over time
 
 feedback ++ when you hit objects
-
-// write some function tests
