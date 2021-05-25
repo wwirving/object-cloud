@@ -5,8 +5,8 @@
 let score = 0;
 let gameFrame = 0;
 
-let densityModulo = 50;
-let feedbackModulo = 1;
+let densityModulo = 1;
+let feedbackModulo = 5000;
 
 // GLOBAL FUNCTIONS
 
@@ -203,7 +203,7 @@ const objectArray = [];
 
 let shuffledArray = shuffleArr(objectLoader);
 
-function handleObjects() {
+const handleObjects = () => {
   if (gameFrame % densityModulo == 0) {
     //every 50 frames..
 
@@ -396,12 +396,12 @@ function handleObjects() {
   }
 
   for (let i = 0; i < objectArray.length; i++) {
-    // call update and draw methods for each bubbles in the array
+    // call update and draw methods for each object in the array
     objectArray[i].update();
     objectArray[i].draw();
   }
 
-  // when y position > 0 then delete bubbles. 0 - this.radius * 2 ensures full bubbles has passed
+  // when y position > 0 then delete object. 0 - this.radius * 2 ensures full bubbles has passed
 
   for (let i = 0; i < objectArray.length; i++) {
     if (objectArray[i].y < 0 - objectArray[i].radius * 2) {
@@ -412,7 +412,7 @@ function handleObjects() {
       if (objectArray[i].distance < objectArray[i].radius + player.radius) {
         // this line allows us to set the score only once per bubble, even though multiple collisions will continue to be registered
         if (!objectArray[i].counted) {
-          if (objectArray[i].sound == "milk") {
+          if (objectArray[i].sound == "yakyu") {
             soundArray[0].play();
           } else if (objectArray[i].sound == "folder") {
             soundArray[1].play();
@@ -424,6 +424,24 @@ function handleObjects() {
             soundArray[4].play();
           } else if (objectArray[i].sound == "humberg") {
             soundArray[5].play();
+          } else if (objectArray[i].sound == "kamakiri") {
+            soundArray[6].play();
+          } else if (objectArray[i].sound == "master") {
+            soundArray[7].play();
+          } else if (objectArray[i].sound == "milk") {
+            soundArray[8].play();
+          } else if (objectArray[i].sound == "pencil") {
+            soundArray[9].play();
+          } else if (objectArray[i].sound == "ramensoup") {
+            soundArray[10].play();
+          } else if (objectArray[i].sound == "shows") {
+            soundArray[11].play();
+          } else if (objectArray[i].sound == "tomato") {
+            soundArray[12].play();
+          } else if (objectArray[i].sound == "tyun") {
+            soundArray[13].play();
+          } else if (objectArray[i].sound == "usagi") {
+            soundArray[14].play();
           }
           score++;
           objectArray[i].counted = true;
@@ -433,7 +451,7 @@ function handleObjects() {
     }
     // collision detection, using distance of each bubble agaisnt player radius
   }
-}
+};
 
 // ANIMATION LOOP
 

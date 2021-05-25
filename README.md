@@ -18,8 +18,6 @@ Browser game built using HTML, CSS and JS
 
 create switch statement for different objects (depending on input integer)
 
-3. Add ideas class (with sound)
-
 4. Configure mechanics so that collision increases feedback
 
 ++) Add background soundscape
@@ -28,9 +26,11 @@ create switch statement for different objects (depending on input integer)
 
 ++ random speed of objects (1-10);
 
+++ change object path (via. touchdesigner)
+
 5. Add more objects
 
-6. Change direction of avatar on click
+6. Change choice of avatar (on load)
 
 ++) refine sound track/sound components
 
@@ -40,7 +40,10 @@ increase density of objects depending on screen size
 
 8. Add sound fx over time - reverb, delay etc.
 
+scale objects and player for smaller browser
+
 ++ add font scaling function // seperate canvas for score
+?? change path of objects (sometimes arising from horizontal direction)?
 
 // rules
 
@@ -48,4 +51,4 @@ density > over time
 
 feedback ++ when you hit objects
 
-++ create imports/exports for functions and write a test for some of them
+// write some function tests
