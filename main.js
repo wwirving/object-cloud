@@ -1,12 +1,24 @@
-// canvas setup
+// sound setup
+
+const sound = new Howl({ src: "./sounds/1.mp3" });
+
+const tuna = new Tuna(Howler.ctx);
+const delay = new tuna.PingPongDelay({
+  wetLevel: 0.5, //0 to 1
+  feedback: 0.3, //0 to 1
+  delayTimeLeft: 200, //1 to 10000 (milliseconds)
+  delayTimeRight: 400, //1 to 10000 (milliseconds)
+});
+
+Howler.addEffect(delay);
 
 // GLOBAL VARIABLES
 
 let score = 0;
 let gameFrame = 0;
 
-let densityModulo = 1;
-let feedbackModulo = 5000;
+let densityModulo = 20;
+let feedbackModulo = 1;
 
 // GLOBAL FUNCTIONS
 
@@ -444,6 +456,12 @@ const handleObjects = () => {
             soundArray[14].play();
           }
           score++;
+
+          if (densityModulo > 1) {
+            densityModulo--;
+          }
+          feedbackModulo++;
+          console.log(feedbackModulo);
           objectArray[i].counted = true;
           objectArray.splice(i, 1); //by calling splice, we remove i element from the array upon collision (1 just means only this one)
         }

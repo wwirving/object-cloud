@@ -36,6 +36,7 @@ export const loadSounds = (length) => {
     const srcLink = `${relPath}${i}${fileType}`;
     soundArray[i] = new Howl({
       src: [`${srcLink}`],
+      volume: 0.2,
     });
   }
 

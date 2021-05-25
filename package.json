@@ -9,6 +9,8 @@
 	},
 	"dependencies": {
 		"babel": "^6.23.0",
-		"howler": "^2.2.1"
+		"howler": "^2.2.1",
+		"howler-plugin-effect-chain": "^0.1.2",
+		"tunajs": "^1.0.13"
 	}
 }
