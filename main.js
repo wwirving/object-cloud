@@ -6,11 +6,14 @@ const theme = new Howl({
   loop: true,
 });
 
-const ambience = new Howl({ src: "./ambience/ambience1.mp3", volume: 0.6 });
+const ambience = new Howl({
+  src: "./ambience/ambience1.mp3",
+  volume: 0.6,
+  loop: true,
+});
 
-const end = new Howl({ src: "./ambience/end.mp3", volume: 0.75 });
+const end = new Howl({ src: "./ambience/end.mp3", volume: 0.9 });
 
-theme.play();
 ambience.play();
 
 const tuna = new Tuna(Howler.ctx);
@@ -35,19 +38,51 @@ const convolver = new tuna.Convolver({
 Howler.addEffect(delay);
 Howler.addEffect(convolver);
 
-// GLOBAL VARIABLES
+// GLOBAL FUNCTIONS AND VARIABLES
+
+import { shuffleArr, getRandom, loadSounds, makeImg } from "./functions.js";
 
 let score = 0;
 let gameFrame = 0;
 let gameEnded = false;
-let gameStart = false;
+let gameStarted = false;
 
 let densityModulo = 20;
 let feedbackModulo = 1;
 
-// GLOBAL FUNCTIONS
+const intro = document.querySelector(".intro");
+const modal = document.querySelector(".modal-bg");
+const screen = document.querySelector(".viewer");
+const finalScore = document.querySelector("#final-score");
+const replay = document.querySelector("#replay");
 
-import { shuffleArr, getRandom, loadSounds, makeImg } from "./functions.js";
+const startGame = () => {
+  gameStarted = false;
+  theme.play();
+  convolver.automate("dryLevel", 0.5, 7500, 0);
+  score = 100;
+  gameFrame = 0;
+  densityModulo = 20;
+  feedbackModulo = 1;
+  screen.style.filter = "none";
+  setTimeout(() => {
+    intro.classList.add("intro-active");
+    setTimeout(() => {
+      gameStarted = true;
+      gameEnded = false;
+      delay.delayTimeLeft = 200;
+      delay.delayTimeRight = 400;
+      delay.wetLevel = 0.5;
+      convolver.automate("wetLevel", 1, 15000, 0);
+      delay.automate("feedback", 0.3, 1500, 0);
+      convolver.dryLevel = 0.5;
+      player.spriteWidth = 182;
+      player.spriteHeight = 179;
+    }, 3000);
+  }, 8000);
+};
+
+startGame();
 
 // CANVAS SETUP
 
@@ -100,8 +135,8 @@ class Player {
     this.frameX = 0;
     this.frameY = 0;
     this.frame = 0;
-    this.spriteWidth = 182;
-    this.spriteHeight = 179;
+    this.spriteWidth = 0;
+    this.spriteHeight = 0;
   }
 
   update() {
@@ -241,7 +276,7 @@ const objectArray = [];
 let shuffledArray = shuffleArr(objectLoader);
 
 const handleObjects = () => {
-  if (gameFrame % densityModulo == 0 && gameStart === true) {
+  if (gameFrame % densityModulo == 0 && gameStarted === true) {
     //every 50 frames..
 
     if (shuffledArray.length < 1) {
@@ -446,7 +481,10 @@ const handleObjects = () => {
     }
 
     if (objectArray[i]) {
-      if (objectArray[i].distance < objectArray[i].radius + player.radius) {
+      if (
+        objectArray[i].distance < objectArray[i].radius + player.radius &&
+        gameStarted == true
+      ) {
         // this line allows us to set the score only once per bubble, even though multiple collisions will continue to be registered
         if (!objectArray[i].counted) {
           if (objectArray[i].sound == "yakyu") {
@@ -480,21 +518,24 @@ const handleObjects = () => {
           } else if (objectArray[i].sound == "usagi") {
             soundArray[14].play();
           }
-          score--;
 
-          if (densityModulo > 1) {
-            densityModulo--;
+          if (gameStarted === true) {
+            score--;
+
+            if (densityModulo > 1) {
+              densityModulo--;
+            }
+            feedbackModulo++;
+
+            if (densityModulo % 0 == 0) {
+              delay.delayTimeLeft += 10;
+            } else {
+              delay.delayTimeRight += 10;
+            }
+
+            objectArray[i].counted = true;
+            objectArray.splice(i, 1); //by calling splice, we remove i element from the array upon collision (1 just means only this one)
           }
-          feedbackModulo++;
-
-          if (densityModulo % 0 == 0) {
-            delay.delayTimeLeft += 10;
-          } else {
-            delay.delayTimeRight += 10;
-          }
-
-          objectArray[i].counted = true;
-          objectArray.splice(i, 1); //by calling splice, we remove i element from the array upon collision (1 just means only this one)
         }
       }
     }
@@ -503,23 +544,30 @@ const handleObjects = () => {
 
 // END GAME HANDLING
 
-const modal = document.querySelector(".modal-bg");
-const screen = document.querySelector(".viewer");
+replay.addEventListener("click", () => {
+  delay.automate("feedback", 0, 1500, 0);
+  delay.automate("wetLevel", 0, 1500, 0);
+  convolver.automate("wetLevel", 0, 1500, 0);
+  delay.automate("delayTimeLeft", 200, 1500, 0);
+  delay.automate("delayTimeRight", 400, 1500, 0);
+  modal.classList.remove("bg-active");
+  gameStarted = false;
+  setTimeout(() => {
+    startGame();
+  }, 3000);
+});
 
 const endGame = () => {
   theme.stop();
   end.play();
   convolver.dryLevel = 0;
-  delay.feedback = 0.8;
+  //delay.feedback = 0.8;
   player.spriteHeight = 0;
   player.spriteWidth = 0;
   gameEnded = true;
   modal.classList.add("bg-active");
   screen.style.filter = "blur(6px)";
-};
-
-const restartGame = () => {
-  location.reload();
+  finalScore.innerText = `${gameFrame}`;
 };
 
 // ANIMATION LOOP
@@ -532,10 +580,12 @@ const animate = () => {
   player.draw();
   handleObjects();
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-  ctx.fillText("SCORE - " + score, 20, 50);
+  ctx.fillText("HEALTH ++ " + score, 20, 50);
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-  ctx.fillText("TIME ELAPSED - " + gameFrame, 20, 120);
-  gameFrame++; // increase game frame as game continues
+  ctx.fillText("SCORE - " + gameFrame, 20, 120);
+  if (gameStarted === true && gameEnded === false) {
+    gameFrame++; // increase game frame as game continues
+  }
   requestAnimationFrame(animate);
   if (score < 0 && gameEnded === false) {
     endGame();
