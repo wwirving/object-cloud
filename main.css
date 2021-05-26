@@ -1,6 +1,14 @@
 @font-face {
-  font-family: "myFont";
+  font-family: "canvasFont";
   src: url("./Sporting_Grotesque-Regular_web.woff");
+}
+@font-face {
+  font-family: "mainFontBorders";
+  src: url("./outward-borders-webfont.woff");
+}
+@font-face {
+  font-family: "mainFontBlock";
+  src: url("./outward-block-webfont.woff");
 }
 * {
   margin: 0;
@@ -24,6 +32,71 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.modal-bg {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s;
+}
+.modal-bg .modal {
+  position: relative;
+  background-color: transparent;
+  width: 50%;
+  height: 80%;
+  display: flex;
+  font-family: "mainFontBorders";
+  font-size: 15vw;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.bg-active {
+  visibility: visible;
+  opacity: 1;
+}
+
+#replay:hover {
+  color: white;
+}
+
+.intro {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s, opacity 0.5s;
+}
+.intro .modal {
+  position: relative;
+  background-color: transparent;
+  width: 80%;
+  height: 95%;
+  display: flex;
+  font-family: "mainFontBorders";
+  font-size: 25vw;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  text-align: center;
 }
 
 /*# sourceMappingURL=main.css.map */

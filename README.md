@@ -28,6 +28,7 @@ add loading and closing screens, final score and option to replay
 
 increase density of objects and settings depending on screen size
 
+++ add random BG sound loader (and different collision sounds through different arrays)
 8. Add sound fx over time - reverb, delay etc. (or increase reverb with modulo?)
 
 scale objects and player for smaller browser, change density cutoff for screen size?

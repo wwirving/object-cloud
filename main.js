@@ -1,10 +1,14 @@
 // sound setup
+
 const theme = new Howl({
   src: "./ambience/objectcld.start.mp3",
   volume: 0.5,
   loop: true,
 });
+
 const ambience = new Howl({ src: "./ambience/ambience1.mp3", volume: 0.6 });
+
+const end = new Howl({ src: "./ambience/end.mp3", volume: 0.75 });
 
 theme.play();
 ambience.play();
@@ -33,8 +37,10 @@ Howler.addEffect(convolver);
 
 // GLOBAL VARIABLES
 
-let score = 100;
+let score = 0;
 let gameFrame = 0;
+let gameEnded = false;
+let gameStart = false;
 
 let densityModulo = 20;
 let feedbackModulo = 1;
@@ -53,7 +59,7 @@ const resizeCanvas = () => {
   let height = window.innerHeight;
   canvas.width = width - 100;
   canvas.height = height - 104;
-  ctx.font = "20px myFont";
+  ctx.font = "20px canvasFont";
 };
 
 resizeCanvas();
@@ -235,7 +241,7 @@ const objectArray = [];
 let shuffledArray = shuffleArr(objectLoader);
 
 const handleObjects = () => {
-  if (gameFrame % densityModulo == 0) {
+  if (gameFrame % densityModulo == 0 && gameStart === true) {
     //every 50 frames..
 
     if (shuffledArray.length < 1) {
@@ -495,6 +501,27 @@ const handleObjects = () => {
   }
 };
 
+// END GAME HANDLING
+
+const modal = document.querySelector(".modal-bg");
+const screen = document.querySelector(".viewer");
+
+const endGame = () => {
+  theme.stop();
+  end.play();
+  convolver.dryLevel = 0;
+  delay.feedback = 0.8;
+  player.spriteHeight = 0;
+  player.spriteWidth = 0;
+  gameEnded = true;
+  modal.classList.add("bg-active");
+  screen.style.filter = "blur(6px)";
+};
+
+const restartGame = () => {
+  location.reload();
+};
+
 // ANIMATION LOOP
 
 const animate = () => {
@@ -510,9 +537,8 @@ const animate = () => {
   ctx.fillText("TIME ELAPSED - " + gameFrame, 20, 120);
   gameFrame++; // increase game frame as game continues
   requestAnimationFrame(animate);
-  if (score < 0) {
-    theme.stop();
-    alert("oh no!");
+  if (score < 0 && gameEnded === false) {
+    endGame();
   }
 };
 
