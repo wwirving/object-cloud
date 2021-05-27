@@ -71,7 +71,7 @@ const resizeCanvas = () => {
   let width = window.innerWidth;
   let height = window.innerHeight;
   canvas.width = width;
-  canvas.height = height - 4;
+  canvas.height = height;
   ctx.font = "20px canvasFont";
 };
 
