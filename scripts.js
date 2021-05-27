@@ -587,9 +587,9 @@ const animate = () => {
   player.draw();
   handleObjects();
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-  ctx.fillText("HEALTH ++ " + score, 20, 50);
+  ctx.fillText("♡ " + score, canvas.width * 0.02, canvas.height * 0.05);
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-  ctx.fillText("SCORE - " + gameFrame, 20, 120);
+  ctx.fillText("→ " + gameFrame, canvas.width * 0.02, canvas.height * 0.1);
   if (gameStarted === true && gameEnded === false) {
     gameFrame++; // increase game frame as game continues
   }
