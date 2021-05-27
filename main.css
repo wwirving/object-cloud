@@ -120,6 +120,7 @@ body {
   background-color: #f0222a;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
 }
 
 #c {

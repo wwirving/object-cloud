@@ -4,7 +4,6 @@
 
 document.body.ontouchmove = (e) => {
   e.preventDefault();
-  return false;
 };
 
 const theme = new Howl({
