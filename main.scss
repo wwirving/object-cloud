@@ -137,6 +137,8 @@ body {
 
 .viewer {
   height: 100vh;
+  position: fixed;
+  overflow: hidden;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -152,6 +154,7 @@ body {
   left: 0;
   background-color: transparent;
   display: flex;
+  overflow: hidden;
   justify-content: center;
   align-items: center;
   visibility: hidden;
@@ -175,6 +178,8 @@ body {
 .bg-active {
   visibility: visible;
   opacity: 1;
+  position: fixed;
+  overflow: hidden;
 }
 
 #replay:hover {
@@ -183,6 +188,7 @@ body {
 
 .intro {
   position: fixed;
+  overflow: hidden;
   width: 100%;
   height: 100vh;
   top: 0;
@@ -215,5 +221,8 @@ body {
 
 .intro-active {
   visibility: hidden;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
   opacity: 0;
 }
