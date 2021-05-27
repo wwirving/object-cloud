@@ -62,34 +62,6 @@ const screen = document.querySelector(".viewer");
 const finalScore = document.querySelector("#final-score");
 const replay = document.querySelector("#replay");
 
-const startGame = () => {
-  gameStarted = false;
-  theme.play();
-  convolver.automate("dryLevel", 0.5, 7500, 0);
-  score = 100;
-  gameFrame = 0;
-  densityModulo = 20;
-  feedbackModulo = 1;
-  screen.style.filter = "none";
-  setTimeout(() => {
-    intro.classList.add("intro-active");
-    setTimeout(() => {
-      gameStarted = true;
-      gameEnded = false;
-      delay.delayTimeLeft = 200;
-      delay.delayTimeRight = 400;
-      delay.wetLevel = 0.5;
-      convolver.automate("wetLevel", 1, 15000, 0);
-      delay.automate("feedback", 0.3, 1500, 0);
-      convolver.dryLevel = 0.5;
-      player.spriteWidth = 182;
-      player.spriteHeight = 179;
-    }, 3000);
-  }, 8000);
-};
-
-startGame();
-
 // CANVAS SETUP
 
 const canvas = document.getElementById("c");
@@ -548,7 +520,48 @@ const handleObjects = () => {
   }
 };
 
-// END GAME HANDLING
+//  GAME HANDLING
+
+const startGame = () => {
+  gameStarted = false;
+  theme.play();
+  convolver.automate("dryLevel", 0.5, 7500, 0);
+  score = 100;
+  gameFrame = 0;
+  console.log(canvas.width);
+  // densityModulo = (canvas.width / 100) * 1.78890876565;
+  // if (densityModulo > 20) {
+  //   densityModulo = 20;
+  // }
+
+  if (canvas.width <= 350) {
+    densityModulo = 75;
+  } else if (canvas.width >= 351 && canvas.width <= 680) {
+    densityModulo = 50;
+  } else {
+    densityModulo = 25;
+  }
+  console.log(densityModulo);
+  feedbackModulo = 1;
+  screen.style.filter = "none";
+  setTimeout(() => {
+    intro.classList.add("intro-active");
+    setTimeout(() => {
+      gameStarted = true;
+      gameEnded = false;
+      delay.delayTimeLeft = 200;
+      delay.delayTimeRight = 400;
+      delay.wetLevel = 0.5;
+      convolver.automate("wetLevel", 1, 15000, 0);
+      delay.automate("feedback", 0.3, 1500, 0);
+      convolver.dryLevel = 0.5;
+      player.spriteWidth = 182;
+      player.spriteHeight = 179;
+    }, 3000);
+  }, 8000);
+};
+
+startGame();
 
 replay.addEventListener("click", () => {
   delay.automate("feedback", 0, 1500, 0);
