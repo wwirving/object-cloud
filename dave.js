@@ -1,0 +1,3 @@
+let timeTest = () => {
+  setTimeout();
+};

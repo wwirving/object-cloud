@@ -1,5 +1,12 @@
 // sound setup
 
+// prevent scrolling
+
+document.body.ontouchmove = (e) => {
+  e.preventDefault();
+  return false;
+};
+
 const theme = new Howl({
   src: "./ambience/objectcld.start.mp3",
   volume: 0.5,
@@ -92,8 +99,8 @@ const ctx = canvas.getContext("2d");
 const resizeCanvas = () => {
   let width = window.innerWidth;
   let height = window.innerHeight;
-  canvas.width = width - 100;
-  canvas.height = height - 104;
+  canvas.width = width - 10;
+  canvas.height = height - 14;
   ctx.font = "20px canvasFont";
 };
 
