@@ -124,10 +124,6 @@ body {
   overflow: hidden;
 }
 
-#c {
-  margin: 0;
-}
-
 .viewer {
   margin: 0;
   height: 100vh;
@@ -160,7 +156,6 @@ body {
 }
 .modal-bg .modal {
   position: relative;
-  padding-top: 3%;
   background-color: transparent;
   width: 75%;
   display: flex;

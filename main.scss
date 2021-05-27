@@ -135,7 +135,6 @@ body {
 #c {
   // border: 4px solid white;
   // border-radius: 30px;
-  margin: 0;
 }
 
 .viewer {
@@ -169,7 +168,6 @@ body {
   transition: visibility 5s, opacity 5s;
   .modal {
     position: relative;
-    padding-top: 3%;
     background-color: transparent;
     width: 75%;
     display: flex;
