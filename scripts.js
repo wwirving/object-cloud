@@ -70,8 +70,8 @@ const ctx = canvas.getContext("2d");
 const resizeCanvas = () => {
   let width = window.innerWidth;
   let height = window.innerHeight;
-  canvas.width = width - 10;
-  canvas.height = height - 14;
+  canvas.width = width;
+  canvas.height = height - 4;
   ctx.font = "20px canvasFont";
 };
 
