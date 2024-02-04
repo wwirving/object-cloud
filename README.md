@@ -1,3 +1,3 @@
-Browser game for mobile and deskto
+Browser game for mobile and desktop
 
 https://wwirving.github.io/object-cloud/
